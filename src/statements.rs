@@ -248,15 +248,18 @@ named!(expression_statement< StrSpan, Statement >, do_parse!(
 /// Statement parser
 named!(pub statement< StrSpan, Statement >, ws!(alt_complete!(
     empty_statement |
-    terminated!(variable_declaration_statement, tag!(";")) |
-    terminated!(expression_statement, tag!(";")) |
+    variable_declaration_statement |
+    expression_statement |
     block_statement |
     if_statement |
     for_statement |
     for_in_statement |
     while_statement |
-    terminated!(do_while_statement, opt2!(tag!(";")))
+    do_while_statement
 )));
 
 /// Statement list parser
-named!(pub statement_list< StrSpan, Vec<Statement> >, many0!(statement));
+named!(pub statement_list< StrSpan, Vec<Statement> >, separated_list!(
+    one_of!("\r\n;"),
+    statement
+));
